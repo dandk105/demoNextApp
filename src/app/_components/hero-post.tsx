@@ -1,6 +1,7 @@
 import Avatar from "@/app/_components/avatar";
 import CoverImage from "@/app/_components/cover-image";
 import { type Author } from "@/interfaces/author";
+import { Tables } from "@/interfaces/database.types";
 import Link from "next/link";
 import DateFormatter from "./date-formatter";
 
@@ -9,7 +10,7 @@ type Props = {
   coverImage: string;
   date: string;
   excerpt: string;
-  author: Author;
+  author: Pick<Tables<"authors">, "first_name" | "avater_url">;
   slug: number;
 };
 
@@ -39,7 +40,7 @@ export function HeroPost({
         </div>
         <div>
           <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-          <Avatar name={author.name} picture={author.picture} />
+          <Avatar name={author.first_name} picture={author.avater_url ? author.avater_url : "名無し"} />
         </div>
       </div>
     </section>

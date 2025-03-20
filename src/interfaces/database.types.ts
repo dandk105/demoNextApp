@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       authors: {
         Row: {
+          avater_url: string | null
           birth_day: string | null
           create_day: string
           first_name: string
@@ -18,6 +19,7 @@ export type Database = {
           last_name: string
         }
         Insert: {
+          avater_url?: string | null
           birth_day?: string | null
           create_day?: string
           first_name?: string
@@ -25,6 +27,7 @@ export type Database = {
           last_name?: string
         }
         Update: {
+          avater_url?: string | null
           birth_day?: string | null
           create_day?: string
           first_name?: string

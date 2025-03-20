@@ -1,7 +1,7 @@
 
 import fs from "fs";
 import matter from "gray-matter";
-import { Post } from "@/interfaces/post";
+import { Post, PostsList } from "@/interfaces/post";
 import { join } from "path";
 import supabase  from "../utils/supabase";
 import { Tables } from "@/interfaces/database.types";
@@ -21,16 +21,18 @@ export function getPostBySlug(slug: string) {
   return { ...data, slug: realSlug, content } as Post;
 }
 
-export async function getAllPosts(): Promise<Tables<'posts'>[]> {
-  const { data, error } = await supabase.from("posts").select("*, authors(*)");
+
+const getPostsQuery = "title, create_day, id, content, image_url, authors(first_name, avater_url)";
+export async function getAllPosts(): Promise<PostsList[]> {
+  const { data, error } = await supabase.from("posts").select(getPostsQuery).order("create_day", { ascending: false });
   if (error) {
     return [];
   }
   return data;
 }
 
-export async function getPostById(id: number): Promise< | null> {
-  const { data, error } = await supabase.from("posts").select("*, authors(first_name,avater_url)").eq("id", id).single();
+export async function getPostById(id: number): Promise<PostsList | null> {
+  const { data, error } = await supabase.from("posts").select(getPostsQuery).eq("id", id).single();
   if (error) {
     return null;
   }
