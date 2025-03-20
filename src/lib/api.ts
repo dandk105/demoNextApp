@@ -1,8 +1,10 @@
-import { Post } from "@/interfaces/post";
+
 import fs from "fs";
 import matter from "gray-matter";
+import { Post } from "@/interfaces/post";
 import { join } from "path";
 import supabase  from "../utils/supabase";
+import { Tables } from "@/interfaces/database.types";
 
 const postsDirectory = join(process.cwd(), "_posts");
 
@@ -19,25 +21,31 @@ export function getPostBySlug(slug: string) {
   return { ...data, slug: realSlug, content } as Post;
 }
 
-export function getAllPosts(): Post[] {
-  const slugs = getPostSlugs();
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug))
-    // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
-  return posts;
+export async function getAllPosts(): Promise<Tables<'posts'>[]> {
+  const { data, error } = await supabase.from("posts").select("*, authors(*)");
+  if (error) {
+    return [];
+  }
+  return data;
 }
 
-export async function getPostById(id: number): Promise<Post | null> {
-  const { data, error } = await supabase.from("posts").select("*").eq("id", id).single();
+export async function getPostById(id: number): Promise< | null> {
+  const { data, error } = await supabase.from("posts").select("*, authors(first_name,avater_url)").eq("id", id).single();
   if (error) {
     return null;
   }
-  return data as Post;
+  return data;
 }
 
 export async function fetchFromDB(): Promise<any> {
   const { data } = await supabase.from("posts").select("*");
-  console.log(data);
   return data;
 };
+
+export async function fetchAuthor(id: string): Promise<Tables<"authors"> | null> {
+  const { data, error } = await supabase.from("authors").select("*").eq("id", id).single();
+  if (error) {
+    return null;
+  }
+  return data;
+}

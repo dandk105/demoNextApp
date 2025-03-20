@@ -1,21 +1,13 @@
 import Container from "@/app/_components/container";
 import { HeroPost } from "@/app/_components/hero-post";
 import { Intro } from "@/app/_components/intro";
-import { MoreStories } from "@/app/_components/more-stories";
-import { fetchFromDB, getAllPosts } from "@/lib/api";
+import { getAllPosts } from "@/lib/api";
 
 
 export default async function Index() {
-
-  const posts = await fetchFromDB();
+  const posts = await getAllPosts();
   const mainPost = posts[0];
   
-  
-  const allPosts = getAllPosts();
-
-  const heroPost = allPosts[0];
-
-  const morePosts = allPosts.slice(1);
 
   return (
     <main>
@@ -23,13 +15,12 @@ export default async function Index() {
         <Intro />
         <HeroPost
           title={mainPost.title}
-          coverImage={heroPost.coverImage}
-          date={mainPost.inserted_at}
-          author={heroPost.author}
-          slug={heroPost.slug}
+          coverImage={mainPost.image_url?mainPost.image_url:""}
+          slug={mainPost.id}
+          date={mainPost.create_day}
+          author={mainPost.author_id}
           excerpt={mainPost.content}
         />
-        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
       </Container>
     </main>
   );
