@@ -1,6 +1,5 @@
 import Avatar from "@/app/_components/avatar";
 import CoverImage from "@/app/_components/cover-image";
-import { type Author } from "@/interfaces/author";
 import { Tables } from "@/interfaces/database.types";
 import Link from "next/link";
 import DateFormatter from "./date-formatter";

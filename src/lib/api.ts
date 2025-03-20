@@ -39,11 +39,6 @@ export async function getPostById(id: number): Promise<PostsList | null> {
   return data;
 }
 
-export async function fetchFromDB(): Promise<any> {
-  const { data } = await supabase.from("posts").select("*");
-  return data;
-};
-
 export async function fetchAuthor(id: string): Promise<Tables<"authors"> | null> {
   const { data, error } = await supabase.from("authors").select("*").eq("id", id).single();
   if (error) {

@@ -7,7 +7,6 @@ import { getAllPosts } from "@/lib/api";
 export default async function Index() {
   const posts = await getAllPosts();
   const mainPost = posts[0];
-  console.log("check path: ",mainPost.image_url);
   
 
   return (

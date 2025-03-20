@@ -1,10 +1,13 @@
+/* eslint-disable */
 "use client";
 
 import styles from "./switch.module.css";
 import { memo, useEffect, useState } from "react";
 
 declare global {
-  let updateDOM: () => void;
+  interface Window {
+    updateDOM: () => void;
+  }
 }
 
 type ColorSchemePreference = "system" | "dark" | "light";
@@ -92,6 +95,7 @@ const Switch = () => {
   );
 };
 
+ 
 const Script = memo(() => (
   <script
     dangerouslySetInnerHTML={{
