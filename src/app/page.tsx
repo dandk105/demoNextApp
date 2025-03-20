@@ -6,6 +6,9 @@ import { getAllPosts } from "@/lib/api";
 
 export default async function Index() {
   const posts = await getAllPosts();
+  if (!posts) {
+    console.log("No posts found");
+  }
   
   const mainPost = posts[0];
   
