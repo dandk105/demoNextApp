@@ -6,6 +6,7 @@ import { getAllPosts } from "@/lib/api";
 
 export default async function Index() {
   const posts = await getAllPosts();
+  
   const mainPost = posts[0];
   
 
@@ -13,14 +14,16 @@ export default async function Index() {
     <main>
       <Container>
         <Intro />
-        <HeroPost
-          title={mainPost.title}
-          coverImage={mainPost.image_url ? mainPost.image_url : ""}
-          slug={mainPost.id}
-          date={mainPost.create_day}
-          author={mainPost.authors}
-          excerpt={mainPost.content}
-        />
+        {mainPost? (
+          <HeroPost
+            title={mainPost.title}
+            coverImage={mainPost.image_url ? mainPost.image_url : ""}
+            slug={mainPost.id}
+            date={mainPost.create_day}
+            author={mainPost.authors}
+            excerpt={mainPost.content}
+          />
+        ) : <h2>Loading</h2>}
       </Container>
     </main>
   );
