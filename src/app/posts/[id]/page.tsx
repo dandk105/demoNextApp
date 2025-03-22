@@ -1,13 +1,16 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllPosts, getPostById } from "@/lib/api";
-import { CMS_NAME } from "@/lib/constants";
-import markdownToHtml from "@/lib/markdownToHtml";
+import { getPostById } from "@/lib/api";
+
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
 import { PostBody } from "@/app/_components/post-body";
 import { PostHeader } from "@/app/_components/post-header";
 import { Tables } from "@/interfaces/database.types";
+
+type Params = {
+  params: Promise<Pick<Tables<"posts">, "id">>;
+};
 
 export default async function Post(props: Params) {
   const params = await props.params;
@@ -17,7 +20,7 @@ export default async function Post(props: Params) {
     return notFound();
   }
 
-  const content = await markdownToHtml(post.content || "");
+  // const content = await markdownToHtml(post.content || ""); */
 
   return (
     <main>
@@ -26,20 +29,16 @@ export default async function Post(props: Params) {
         <article className="mb-32">
           <PostHeader
             title={post.title}
-            coverImage={post.authors.avater_url? post.authors.avater_url : ""}
+            coverImage={post.image_url ? post.image_url : ""}
             date={post.create_day}
-            author={post.authors}
+            author={post.author}
           />
-          <PostBody content={content} />
+          <PostBody content={post.content} />
         </article>
       </Container>
     </main>
   );
 }
-
-type Params = {
-  params: Promise<Tables<'posts'>>;
-};
 
 export async function generateMetadata(props: Params): Promise<Metadata> {
   const params = await props.params;
@@ -49,17 +48,11 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     return notFound();
   }
 
-  const title = `${post.title} | Next.js Blog Example with ${CMS_NAME}`;
+  const title = `${post.title}`;
 
   return {
-    title
+    title,
   };
 }
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
 
-  return posts.map((post) => ({
-    id: post.id,
-  }));
-}
