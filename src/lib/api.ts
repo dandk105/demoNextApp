@@ -1,7 +1,6 @@
 
 import fs from "fs";
-import matter from "gray-matter";
-import { Post, PostsList } from "@/interfaces/post";
+import { Post, PostList } from "@/interfaces/post";
 import { join } from "path";
 import { createClient } from "../utils/supabase/server";
 import { Tables } from "@/interfaces/database.types";
@@ -12,18 +11,18 @@ export function getPostSlugs() {
   return fs.readdirSync(postsDirectory);
 }
 
-export function getPostBySlug(slug: string) {
+/* export function getPostBySlug(slug: string) {
   const realSlug = slug.replace(/\.md$/, "");
   const fullPath = join(postsDirectory, `${realSlug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
   return { ...data, slug: realSlug, content } as Post;
-}
+} */
 
 
-const getPostsQuery = "title, create_day, id, content, image_url, authors(first_name, avater_url)";
-export async function getAllPosts(): Promise<PostsList[]> {
+const getPostsQuery = "title, create_day, id, content, image_url, author:authors(first_name, avater_url)";
+export async function getAllPosts(): Promise<PostList| []> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("posts")
@@ -35,7 +34,7 @@ export async function getAllPosts(): Promise<PostsList[]> {
   return data;
 }
 
-export async function getPostById(id: number): Promise<PostsList | null> {
+export async function getPostById(id: number): Promise<Post | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("posts")
