@@ -3,7 +3,7 @@ import fs from "fs";
 import matter from "gray-matter";
 import { Post, PostsList } from "@/interfaces/post";
 import { join } from "path";
-import supabase  from "../utils/supabase";
+import { createClient } from "../utils/supabase/server";
 import { Tables } from "@/interfaces/database.types";
 
 const postsDirectory = join(process.cwd(), "_posts");
@@ -24,7 +24,11 @@ export function getPostBySlug(slug: string) {
 
 const getPostsQuery = "title, create_day, id, content, image_url, authors(first_name, avater_url)";
 export async function getAllPosts(): Promise<PostsList[]> {
-  const { data, error } = await supabase.from("posts").select(getPostsQuery).order("create_day", { ascending: false });
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(getPostsQuery)
+    .order("create_day", { ascending: false });
   if (error) {
     return [];
   }
@@ -32,7 +36,12 @@ export async function getAllPosts(): Promise<PostsList[]> {
 }
 
 export async function getPostById(id: number): Promise<PostsList | null> {
-  const { data, error } = await supabase.from("posts").select(getPostsQuery).eq("id", id).single();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(getPostsQuery)
+    .eq("id", id)
+    .single();
   if (error) {
     return null;
   }
@@ -40,6 +49,7 @@ export async function getPostById(id: number): Promise<PostsList | null> {
 }
 
 export async function fetchAuthor(id: string): Promise<Tables<"authors"> | null> {
+  const supabase = await createClient();
   const { data, error } = await supabase.from("authors").select("*").eq("id", id).single();
   if (error) {
     return null;
